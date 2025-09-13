@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TabSaver</title>
+  <style>
+    body { font-family: Arial, sans-serif; width: 300px; margin: 0; padding: 10px; }
+    .tabset-list { margin-top: 20px; }
+    .tabset-item { margin-bottom: 10px; }
+    button { margin-top: 10px; }
+    input[type="text"] { width: 80%; }
+  </style>
+</head>
+<body>
+  <h2>TabSaver</h2>
+  <input type="text" id="tabsetName" placeholder="Tab set name (optional)">
+  <button id="saveTabsBtn">Save Current Tabs</button>
+  <button id="clearAllBtn" style="background:#e74c3c;color:#fff;float:right;">Clear All Data</button>
+  <div class="tabset-list" id="tabsetList"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

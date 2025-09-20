@@ -1,21 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>TabSaver</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; width: 300px; margin: 0; padding: 10px; }
-    .tabset-list { margin-top: 20px; }
-    .tabset-item { margin-bottom: 10px; }
-    button { margin-top: 10px; }
-    input[type="text"] { width: 80%; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; width: 320px; margin: 0; padding: 15px; background: #f9f9f9; color: #333; }
+    h2 { margin-bottom: 15px; color: #2c3e50; }
+    .tabset-list { margin-top: 15px; }
+    .tabset-item { margin-bottom: 12px; padding: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .tabset-item strong { display: block; margin-bottom: 8px; color: #34495e; }
+    button { padding: 6px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; transition: background 0.2s; }
+    button:hover { opacity: 0.9; }
+    #saveTabsBtn { background: #27ae60; color: white; }
+    .delete { background: #e74c3c; color: white; }
+    .view-tabs { background: #3498db; color: white; }
+    #clearAllBtn { background: #e74c3c; color: white; float: right; margin-top: 0; }
+    input[type="text"] { width: calc(100% - 10px); padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    #searchInput { margin-top: 10px; }
+    .tab-urls { padding: 8px; background: #f8f8f8; border-radius: 4px; }
+    #previewSection { margin-top: 15px; }
+    #previewTabs { padding: 10px; background: #f8f8f8; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
   <h2>TabSaver</h2>
   <input type="text" id="tabsetName" placeholder="Tab set name (optional)">
-  <button id="saveTabsBtn">Save Current Tabs</button>
+  <button id="saveTabsBtn"><span class="material-icons">save</span> Save Current Tabs</button>
   <button id="clearAllBtn" style="background:#e74c3c;color:#fff;float:right;">Clear All Data</button>
+  <input type="text" id="searchInput" placeholder="Search tab sets..." style="width: 100%; margin-top: 10px; padding: 5px;">
   <div class="tabset-list" id="tabsetList"></div>
+  
+  <div id="previewSection">
+    <h3 style="font-size: 16px; color: #2c3e50;">Preview Tabs</h3>
+    <div id="previewTabs">
+      <em style="color: #7f8c8d;">No tabs to preview.</em>
+    </div>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabsetList = document.getElementById('tabsetList');
   const clearAllBtn = document.getElementById('clearAllBtn');
   const searchInput = document.getElementById('searchInput');
+  const refreshPreviewBtn = document.getElementById('refreshPreviewBtn');
 
   function getDomain(url) {
     try {
@@ -66,29 +67,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Refactor nested functions
   saveBtn.addEventListener('click', () => {
     updatePreviewTabs();
     chrome.tabs.query({currentWindow: true}, (tabs) => {
-      const urls = tabs.map(tab => tab.url);
+      const tabData = tabs.map(tab => ({
+        url: tab.url,
+        pinned: tab.pinned,
+        index: tab.index
+      }));
       let name = tabsetNameInput.value.trim();
       if (!name) {
-        const domains = Array.from(new Set(urls.map(getDomain)));
+        const domains = Array.from(new Set(tabData.map(tab => getDomain(tab.url))));
         name = domains.join(', ');
       }
-      chrome.storage.local.get('tabSets', (data) => {
-        const tabSets = data.tabSets || {};
-        tabSets[name] = urls;
-        chrome.storage.local.set({tabSets}, () => loadTabSets(searchInput.value));
-        tabsetNameInput.value = '';
-      });
+      saveTabSet(name, tabData);
     });
   });
+
+  function saveTabSet(name, tabData) {
+    chrome.storage.local.get('tabSets', (data) => {
+      const tabSets = data.tabSets || {};
+      tabSets[name] = tabData;
+      chrome.storage.local.set({tabSets}, () => loadTabSets(searchInput.value));
+      tabsetNameInput.value = '';
+    });
+  }
 
   tabsetNameInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       saveBtn.click();
     }
   });
+
+  // Use optional chaining
+  function restoreTabSet(name) {
+    chrome.storage.local.get('tabSets', (data) => {
+      const tabData = data.tabSets?.[name];
+      if (tabData?.length) {
+        tabData.sort((a, b) => a.index - b.index); // Sort by original order
+        tabData.forEach(tab => {
+          chrome.tabs.create({
+            url: tab.url,
+            pinned: tab.pinned
+          });
+        });
+      }
+    });
+  }
 
   tabsetList.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
@@ -127,12 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       } else {
-        chrome.storage.local.get('tabSets', (data) => {
-          const urls = data.tabSets[name];
-          if (urls?.length) {
-            chrome.windows.create({url: urls, focused: true});
-          }
-        });
+        restoreTabSet(name);
       }
     }
   });
@@ -146,6 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm('Are you sure you want to clear all saved tab sets? This cannot be undone.')) {
       chrome.storage.local.remove('tabSets', () => loadTabSets(searchInput.value));
     }
+  });
+
+  refreshPreviewBtn.addEventListener('click', () => {
+    updatePreviewTabs();
   });
 
   // Update preview on popup load
